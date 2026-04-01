@@ -3,6 +3,7 @@ import { ArrowRight, Trophy, Heart, Target } from 'lucide-react'
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 import { Button } from '@/components/ui'
+import { FadeIn } from '@/components/ui/FadeIn'
 
 export default function HomePage() {
     return (
@@ -28,35 +29,43 @@ function Hero() {
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(108,99,255,0.07)_0%,transparent_60%)] pointer-events-none" />
 
             <div className="max-w-6xl mx-auto px-4 sm:px-6 py-24 text-center">
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--color-impact-muted)] border border-[var(--color-impact)]/20 text-[var(--color-impact)] text-xs font-medium mb-8">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-impact)] animate-pulse" />
-                    Golf that gives back
-                </div>
+                <FadeIn delay={0.1}>
+                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--color-impact-muted)] border border-[var(--color-impact)]/20 text-[var(--color-impact)] text-xs font-medium mb-8">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-impact)] animate-pulse" />
+                        Golf that gives back
+                    </div>
+                </FadeIn>
 
-                <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight mb-6 leading-tight">
-                    Your game.
-                    <br />
-                    <span style={{ background: 'linear-gradient(135deg, #6C63FF, #00D4AA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-                        Their future.
-                    </span>
-                </h1>
+                <FadeIn delay={0.2}>
+                    <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight mb-6 leading-tight">
+                        Your game.
+                        <br />
+                        <span style={{ background: 'linear-gradient(135deg, #6C63FF, #00D4AA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                            Their future.
+                        </span>
+                    </h1>
+                </FadeIn>
 
-                <p className="text-lg sm:text-xl text-[var(--color-text-muted)] max-w-xl mx-auto mb-10 leading-relaxed">
-                    Subscribe, enter your Stableford scores, and you&apos;re automatically in the monthly prize draw — while a portion of your fee goes straight to a charity you pick.
-                </p>
+                <FadeIn delay={0.3}>
+                    <p className="text-lg sm:text-xl text-[var(--color-text-muted)] max-w-xl mx-auto mb-10 leading-relaxed">
+                        Subscribe, enter your Stableford scores, and you&apos;re automatically in the monthly prize draw — while a portion of your fee goes straight to a charity you pick.
+                    </p>
+                </FadeIn>
 
-                <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                    <Link href="/signup">
-                        <Button size="lg" variant="impact" icon={<ArrowRight className="w-5 h-5" />}>
-                            Start giving back
-                        </Button>
-                    </Link>
-                    <Link href="/how-it-works">
-                        <Button size="lg" variant="secondary">
-                            See how it works
-                        </Button>
-                    </Link>
-                </div>
+                <FadeIn delay={0.4}>
+                    <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                        <Link href="/signup">
+                            <Button size="lg" variant="impact" icon={<ArrowRight className="w-5 h-5" />}>
+                                Start giving back
+                            </Button>
+                        </Link>
+                        <Link href="/how-it-works">
+                            <Button size="lg" variant="secondary">
+                                See how it works
+                            </Button>
+                        </Link>
+                    </div>
+                </FadeIn>
 
                 <div className="mt-16 grid grid-cols-3 gap-6 max-w-sm mx-auto text-center">
                     {[
@@ -103,14 +112,16 @@ function HowItWorks() {
 
             <div className="grid md:grid-cols-3 gap-6">
                 {steps.map((s, i) => (
-                    <div key={i} className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl p-6 relative">
-                        <span className="absolute top-4 right-4 text-xs font-bold text-[var(--color-text-subtle)]">0{i + 1}</span>
-                        <div className="w-11 h-11 rounded-xl bg-[var(--color-bg)] flex items-center justify-center mb-4 border border-[var(--color-border)]">
-                            {s.icon}
+                    <FadeIn key={i} delay={0.2 + (i * 0.1)} className="h-full">
+                        <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl p-6 relative h-full">
+                            <span className="absolute top-4 right-4 text-xs font-bold text-[var(--color-text-subtle)]">0{i + 1}</span>
+                            <div className="w-11 h-11 rounded-xl bg-[var(--color-bg)] flex items-center justify-center mb-4 border border-[var(--color-border)]">
+                                {s.icon}
+                            </div>
+                            <h3 className="font-semibold text-lg mb-2">{s.title}</h3>
+                            <p className="text-sm text-[var(--color-text-muted)] leading-relaxed">{s.desc}</p>
                         </div>
-                        <h3 className="font-semibold text-lg mb-2">{s.title}</h3>
-                        <p className="text-sm text-[var(--color-text-muted)] leading-relaxed">{s.desc}</p>
-                    </div>
+                    </FadeIn>
                 ))}
             </div>
         </section>
@@ -139,8 +150,8 @@ function PrizeTiers() {
                         <div
                             key={t.match}
                             className={`flex items-center justify-between rounded-xl px-5 py-4 border ${t.highlight
-                                    ? 'border-[var(--color-accent)]/30 bg-[var(--color-accent-muted)]'
-                                    : 'border-[var(--color-border)] bg-[var(--color-bg)]'
+                                ? 'border-[var(--color-accent)]/30 bg-[var(--color-accent-muted)]'
+                                : 'border-[var(--color-border)] bg-[var(--color-bg)]'
                                 }`}
                         >
                             <div>
@@ -204,23 +215,25 @@ function CharitySpotlight() {
 function FinalCTA() {
     return (
         <section className="max-w-6xl mx-auto px-4 sm:px-6 py-16 pb-24">
-            <div className="relative rounded-3xl overflow-hidden border border-[var(--color-border)] bg-[var(--color-surface)] text-center px-8 py-16">
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(108,99,255,0.12)_0%,transparent_70%)] pointer-events-none" />
-                <div className="relative">
-                    <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-                        Ready to play with purpose?
-                    </h2>
-                    <p className="text-[var(--color-text-muted)] mb-8 max-w-md mx-auto">
-                        Join GreenGive and start turning your golf rounds into something that matters.
-                    </p>
-                    <Link href="/signup">
-                        <Button size="lg" variant="impact">
-                            Get started — it&apos;s free to try
-                        </Button>
-                    </Link>
-                    <p className="text-xs text-[var(--color-text-muted)] mt-4">No commitment. Cancel whenever.</p>
+            <FadeIn delay={0.2} direction="up">
+                <div className="relative rounded-3xl overflow-hidden border border-[var(--color-border)] bg-[var(--color-surface)] text-center px-8 py-16">
+                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(108,99,255,0.12)_0%,transparent_70%)] pointer-events-none" />
+                    <div className="relative">
+                        <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+                            Ready to play with purpose?
+                        </h2>
+                        <p className="text-[var(--color-text-muted)] mb-8 max-w-md mx-auto">
+                            Join GreenGive and start turning your golf rounds into something that matters.
+                        </p>
+                        <Link href="/signup">
+                            <Button size="lg" variant="impact">
+                                Get started — it&apos;s free to try
+                            </Button>
+                        </Link>
+                        <p className="text-xs text-[var(--color-text-muted)] mt-4">No commitment. Cancel whenever.</p>
+                    </div>
                 </div>
-            </div>
+            </FadeIn>
         </section>
     )
 }
