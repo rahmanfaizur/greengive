@@ -23,7 +23,6 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         { label: 'Draws & Winners', href: '/admin/draws', icon: <Trophy className="w-4 h-4" /> },
         { label: 'Users', href: '/admin/users', icon: <Users className="w-4 h-4" /> },
         { label: 'Reports', href: '/admin/reports', icon: <BarChart className="w-4 h-4" /> },
-        { label: 'Settings', href: '/admin/settings', icon: <Settings className="w-4 h-4" /> },
     ]
 
     return (

@@ -13,7 +13,6 @@ export default async function DashboardLayout({ children }: { children: React.Re
     const navItems = [
         { label: 'Overview', href: '/dashboard', icon: <LayoutDashboard className="w-4 h-4" /> },
         { label: 'History & Prizes', href: '/dashboard/history', icon: <Award className="w-4 h-4" /> },
-        { label: 'Settings', href: '/dashboard/settings', icon: <Settings className="w-4 h-4" /> },
     ]
 
     return (
