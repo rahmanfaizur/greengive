@@ -1,6 +1,6 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 
 export async function login(formData: FormData) {
@@ -34,8 +34,9 @@ export async function signup(formData: FormData) {
 
     // create user row
     if (data.user) {
+        const adminSupabase = await createAdminClient()
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        await (supabase.from('users') as any).insert({
+        await (adminSupabase.from('users') as any).insert({
             id: data.user.id,
             email,
             full_name,
