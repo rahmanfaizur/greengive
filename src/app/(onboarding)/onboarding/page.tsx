@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui'
 import { Heart, Trophy } from 'lucide-react'
@@ -13,7 +13,7 @@ const charities = [
     { id: '4', name: 'Mind', category: 'Mental Health' },
 ]
 
-export default function OnboardingPage() {
+function OnboardingContent() {
     const params = useSearchParams()
     // Try to grab pre-selected choices from URL
     const initialPlan = (params.get('plan') as 'monthly' | 'yearly') || 'monthly'
@@ -68,8 +68,8 @@ export default function OnboardingPage() {
                         <button
                             onClick={() => setPlan('monthly')}
                             className={`text-left p-4 rounded-xl border transition-all ${plan === 'monthly'
-                                    ? 'border-[var(--color-accent)] bg-[var(--color-accent-muted)]'
-                                    : 'border-[var(--color-border)] hover:border-[var(--color-accent)]/50'
+                                ? 'border-[var(--color-accent)] bg-[var(--color-accent-muted)]'
+                                : 'border-[var(--color-border)] hover:border-[var(--color-accent)]/50'
                                 }`}
                         >
                             <div className="font-semibold mb-1">Monthly</div>
@@ -80,8 +80,8 @@ export default function OnboardingPage() {
                         <button
                             onClick={() => setPlan('yearly')}
                             className={`text-left p-4 rounded-xl border relative transition-all ${plan === 'yearly'
-                                    ? 'border-[var(--color-accent)] bg-[var(--color-accent-muted)]'
-                                    : 'border-[var(--color-border)] hover:border-[var(--color-accent)]/50'
+                                ? 'border-[var(--color-accent)] bg-[var(--color-accent-muted)]'
+                                : 'border-[var(--color-border)] hover:border-[var(--color-accent)]/50'
                                 }`}
                         >
                             <span className="absolute -top-2.5 right-4 px-2 py-0.5 rounded text-[10px] font-bold bg-[var(--color-accent)] text-white uppercase tracking-wider">
@@ -110,8 +110,8 @@ export default function OnboardingPage() {
                                 key={c.id}
                                 onClick={() => setCharityId(c.id)}
                                 className={`flex items-center gap-3 p-3 rounded-xl border text-left transition-all ${charityId === c.id
-                                        ? 'border-[var(--color-impact)] bg-[var(--color-impact-muted)]'
-                                        : 'border-[var(--color-border)] hover:border-[var(--color-impact)]/50'
+                                    ? 'border-[var(--color-impact)] bg-[var(--color-impact-muted)]'
+                                    : 'border-[var(--color-border)] hover:border-[var(--color-impact)]/50'
                                     }`}
                             >
                                 <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${charityId === c.id ? 'bg-[var(--color-impact)] text-white' : 'bg-[var(--color-bg)] text-[var(--color-impact)]'
@@ -185,5 +185,13 @@ export default function OnboardingPage() {
                 </Button>
             </div>
         </div>
+    )
+}
+
+export default function OnboardingPage() {
+    return (
+        <Suspense fallback={<div className="p-8 text-center text-[var(--color-text-muted)]">Loading checkout options...</div>}>
+            <OnboardingContent />
+        </Suspense>
     )
 }

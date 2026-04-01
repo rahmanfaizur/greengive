@@ -1,12 +1,12 @@
 'use client'
 
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { signup } from '../actions'
 import { Button, Input } from '@/components/ui'
 
-export default function SignupPage() {
+function SignupContent() {
     const params = useSearchParams()
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
@@ -71,5 +71,13 @@ export default function SignupPage() {
                 </Link>
             </p>
         </div>
+    )
+}
+
+export default function SignupPage() {
+    return (
+        <Suspense fallback={<div className="p-8 text-center text-sm text-[var(--color-text-muted)]">Loading signup...</div>}>
+            <SignupContent />
+        </Suspense>
     )
 }
