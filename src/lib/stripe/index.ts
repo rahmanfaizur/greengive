@@ -25,7 +25,9 @@ export async function createCheckoutSession(
     email: string,
     priceId: string,
     successUrl: string,
-    cancelUrl: string
+    cancelUrl: string,
+    charityId: string,
+    charityPct: number
 ) {
     return stripe.checkout.sessions.create({
         customer_email: email,
@@ -33,9 +35,9 @@ export async function createCheckoutSession(
         mode: 'subscription',
         success_url: successUrl,
         cancel_url: cancelUrl,
-        metadata: { userId },
+        metadata: { userId, charityId, charityPct: charityPct.toString() },
         subscription_data: {
-            metadata: { userId },
+            metadata: { userId, charityId, charityPct: charityPct.toString() },
         },
     })
 }

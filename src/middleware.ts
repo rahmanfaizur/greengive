@@ -47,27 +47,34 @@ export async function middleware(request: NextRequest) {
         }
     }
 
-    // /dashboard/* needs login
-    if (path.startsWith('/dashboard')) {
-        if (!user) {
-            return NextResponse.redirect(new URL('/login', request.url))
-        }
-        // let them into /settings even if lapsed so they can resubscribe
-        if (!path.startsWith('/dashboard/settings')) {
-            const { data: sub } = await supabase
-                .from('subscriptions')
-                .select('status')
-                .eq('user_id', user.id)
-                .single() as { data: { status: string } | null; error: unknown }
-            if (!sub || sub.status !== 'active') {
-                return NextResponse.redirect(new URL('/pricing?subscribe=true', request.url))
-            }
-        }
+    // /onboarding needs login
+    if (path.startsWith('/onboarding') && !user) {
+        return NextResponse.redirect(new URL('/login', request.url))
     }
 
     // skip login/signup if already logged in
     if ((path === '/login' || path === '/signup') && user) {
         return NextResponse.redirect(new URL('/dashboard', request.url))
+    }
+
+    // /dashboard/* needs login
+    if (path.startsWith('/dashboard')) {
+        if (!user) {
+            return NextResponse.redirect(new URL('/login', request.url))
+        }
+        // let them into /dashboard/settings even if lapsed so they can resubscribe
+        if (!path.startsWith('/dashboard/settings')) {
+            // Check if they have an active subscription
+            const { data: sub } = await supabase
+                .from('subscriptions')
+                .select('status')
+                .eq('user_id', user.id)
+                .single() as { data: { status: string } | null; error: unknown }
+
+            if (!sub || sub.status !== 'active') {
+                return NextResponse.redirect(new URL('/onboarding', request.url))
+            }
+        }
     }
 
     return supabaseResponse

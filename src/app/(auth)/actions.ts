@@ -40,7 +40,15 @@ export async function signup(formData: FormData) {
         })
     }
 
-    redirect('/pricing?onboarding=true')
+    const plan = formData.get('plan') as string
+    const charity = formData.get('charity_slug') as string
+
+    // redirect to onboarding with their pre-selected choices to complete checkout
+    const params = new URLSearchParams()
+    if (plan) params.set('plan', plan)
+    if (charity) params.set('charity', charity)
+
+    redirect(`/onboarding?${params.toString()}`)
 }
 
 export async function resetPassword(formData: FormData) {
