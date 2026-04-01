@@ -46,3 +46,36 @@ export async function deleteScore(id: string) {
     revalidatePath('/dashboard')
     return { success: true }
 }
+
+export async function uploadWinnerProof(formData: FormData) {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return { error: 'Unauthorized' }
+
+    const file = formData.get('file') as File
+    const winnerId = formData.get('winnerId') as string
+
+    if (!file || !winnerId) return { error: 'Missing file or winner ID' }
+
+    // Upload to Supabase Storage bucket 'winner_proofs'
+    const ext = file.name.split('.').pop()
+    const filename = `${winnerId}-${Date.now()}.${ext}`
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error: uploadError } = await (supabase.storage as any).from('winner_proofs').upload(filename, file)
+    if (uploadError) return { error: 'Failed to upload image. Please try again.' }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: urlData } = (supabase.storage as any).from('winner_proofs').getPublicUrl(filename)
+
+    // Update the winner record
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error: updateError } = await (supabase.from('winners') as any).update({
+        proof_url: urlData.publicUrl
+    }).match({ id: winnerId, user_id: user.id })
+
+    if (updateError) return { error: 'Failed to save proof URL securely.' }
+
+    revalidatePath('/dashboard')
+    return { success: true }
+}

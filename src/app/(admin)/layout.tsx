@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { LayoutDashboard, Users, Heart, Trophy, LogOut, Settings } from 'lucide-react'
+import { LayoutDashboard, Users, Heart, Trophy, LogOut, Settings, BarChart } from 'lucide-react'
 import { ToastProvider } from '@/components/ui'
 
 export const metadata = { title: 'Admin | GreenGive' }
@@ -22,6 +22,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         { label: 'Charities', href: '/admin/charities', icon: <Heart className="w-4 h-4" /> },
         { label: 'Draws & Winners', href: '/admin/draws', icon: <Trophy className="w-4 h-4" /> },
         { label: 'Users', href: '/admin/users', icon: <Users className="w-4 h-4" /> },
+        { label: 'Reports', href: '/admin/reports', icon: <BarChart className="w-4 h-4" /> },
         { label: 'Settings', href: '/admin/settings', icon: <Settings className="w-4 h-4" /> },
     ]
 

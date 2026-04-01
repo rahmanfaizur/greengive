@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { ScoreForm } from './ScoreForm'
 import { deleteScore } from './actions'
 import { Trash2, Heart, Trophy } from 'lucide-react'
+import { WinnerBanner } from './WinnerBanner'
 
 export const metadata = { title: 'Dashboard | GreenGive' }
 
@@ -25,9 +26,22 @@ export default async function DashboardPage() {
         .select('charity_id, charity_percentage')
         .eq('user_id', user!.id)
         .single()
+    // Fetch any winning records for this user that need attention or are recent
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: winnersRaw } = await (supabase.from('winners') as any)
+        .select('*, draws(month)')
+        .eq('user_id', user!.id)
+        .order('created_at', { ascending: false })
+        .limit(1)
+
+    const latestWinner = winnersRaw?.[0]
 
     return (
         <div className="space-y-8">
+            {latestWinner && (latestWinner.status === 'pending_verification' || latestWinner.status === 'verified') && (
+                <WinnerBanner winner={latestWinner as any} />
+            )}
+
             <div>
                 <h1 className="text-3xl font-bold mb-2">Welcome back</h1>
                 <p className="text-[var(--color-text-muted)]">
