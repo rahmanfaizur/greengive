@@ -4,12 +4,12 @@ export function cn(...inputs: ClassValue[]) {
     return clsx(inputs)
 }
 
-export function formatCurrency(pence: number, currency = 'GBP'): string {
+export function formatCurrency(amount: number, currency = 'GBP'): string {
     return new Intl.NumberFormat('en-GB', {
         style: 'currency',
         currency,
         minimumFractionDigits: 2,
-    }).format(pence / 100)
+    }).format(amount)
 }
 
 export function formatDate(date: string | Date): string {
