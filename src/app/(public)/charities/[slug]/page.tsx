@@ -1,28 +1,30 @@
 import Link from 'next/link'
+import { notFound } from 'next/navigation'
 import { Heart, Calendar, ArrowLeft } from 'lucide-react'
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 import { Button } from '@/components/ui'
+import { createClient } from '@/lib/supabase/server'
+import { DonateButton } from '@/components/features/DonateButton'
 
-// static placeholder — replaced by Supabase fetch in Phase 7
-const charityData: Record<string, { name: string; desc: string; longDesc: string; category: string; events: string[] }> = {
-    macmillan: {
-        name: 'Macmillan Cancer Support',
-        desc: 'Supporting people living with cancer',
-        longDesc: 'Macmillan Cancer Support improves the lives of people living with cancer. We provide physical, financial, and emotional support for people with cancer and their families.',
-        category: 'Health',
-        events: ['Macmillan Golf Day — June 2026', 'Coffee Morning Fundraiser — May 2026'],
-    },
-}
+export default async function CharityProfilePage({ params }: { params: { slug: string } }) {
+    const supabase = await createClient()
 
-export default function CharityProfilePage({ params }: { params: { slug: string } }) {
-    const charity = charityData[params.slug] ?? {
-        name: 'Charity',
-        desc: '',
-        longDesc: 'This charity makes a real difference. Your monthly contribution helps fund their work directly.',
-        category: 'Verified',
-        events: [],
+    // Fetch charity from DB
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: result } = await (supabase.from('charities') as any)
+        .select('*')
+        .eq('slug', params.slug)
+        .single()
+
+    if (!result) {
+        notFound()
     }
+
+    const charity: any = result
+
+    // Safely parse events JSON array
+    const events = Array.isArray(charity.events) ? charity.events : []
 
     return (
         <>
@@ -36,23 +38,29 @@ export default function CharityProfilePage({ params }: { params: { slug: string 
                 <div className="grid md:grid-cols-3 gap-8">
                     <div className="md:col-span-2 space-y-6">
                         <div>
-                            <span className="text-xs text-[var(--color-text-muted)] mb-2 block">{charity.category}</span>
+                            {charity.is_featured && <span className="text-xs font-semibold text-[var(--color-impact)] uppercase tracking-wider mb-2 block">Featured Partner</span>}
                             <h1 className="text-3xl sm:text-4xl font-bold mb-3">{charity.name}</h1>
-                            <p className="text-[var(--color-text-muted)]">{charity.desc}</p>
+                            <p className="text-[var(--color-text-muted)] text-lg">{charity.description}</p>
                         </div>
 
-                        <div className="w-full h-48 rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] flex items-center justify-center">
-                            <Heart className="w-10 h-10 text-[var(--color-impact)]/40" />
+                        <div className="w-full h-48 rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)] flex items-center justify-center overflow-hidden relative">
+                            {charity.logo_url ? (
+                                <img src={charity.logo_url} alt={charity.name} className="w-full h-full object-cover opacity-80" />
+                            ) : (
+                                <Heart className="w-10 h-10 text-[var(--color-impact)]/40" />
+                            )}
                         </div>
 
-                        <p className="text-[var(--color-text-muted)] leading-relaxed text-sm">{charity.longDesc}</p>
+                        <p className="text-[var(--color-text-muted)] leading-relaxed text-sm">
+                            Your support makes a real difference. By selecting <strong>{charity.name}</strong> as your chosen charity on GreenGive, a guaranteed percentage of your subscription goes directly to funding their critical work every single month.
+                        </p>
 
-                        {charity.events.length > 0 && (
+                        {events.length > 0 && (
                             <div>
                                 <h2 className="font-semibold mb-3">Upcoming events</h2>
                                 <ul className="space-y-2">
-                                    {charity.events.map((e) => (
-                                        <li key={e} className="flex items-center gap-2.5 text-sm bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl px-4 py-3">
+                                    {events.map((e: any, i: number) => (
+                                        <li key={i} className="flex items-center gap-2.5 text-sm bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl px-4 py-3">
                                             <Calendar className="w-4 h-4 text-[var(--color-accent)] flex-shrink-0" />
                                             {e}
                                         </li>
@@ -72,11 +80,25 @@ export default function CharityProfilePage({ params }: { params: { slug: string 
                             <p className="text-xs text-[var(--color-text-muted)] mb-4 leading-relaxed">
                                 Pick this charity when you sign up and at least 10% of your subscription goes to them every month.
                             </p>
-                            <Link href={`/signup?charity=${params.slug}`}>
-                                <Button variant="impact" className="w-full">
-                                    Choose this charity
-                                </Button>
-                            </Link>
+
+                            <div className="space-y-3">
+                                <Link href={`/signup?charity=${params.slug}`}>
+                                    <Button variant="impact" className="w-full">
+                                        Select via Subscription
+                                    </Button>
+                                </Link>
+
+                                <div className="relative py-2">
+                                    <div className="absolute inset-0 flex items-center" aria-hidden="true">
+                                        <div className="w-full border-t border-[var(--color-border)]" />
+                                    </div>
+                                    <div className="relative flex justify-center">
+                                        <span className="bg-[var(--color-surface)] px-2 text-[10px] uppercase tracking-wider text-[var(--color-text-muted)]">Or</span>
+                                    </div>
+                                </div>
+
+                                <DonateButton charityId={charity.id} />
+                            </div>
                         </div>
                     </div>
                 </div>

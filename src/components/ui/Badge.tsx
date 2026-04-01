@@ -1,6 +1,6 @@
 import { clsx } from 'clsx'
 
-type BadgeVariant = 'active' | 'lapsed' | 'pending' | 'draft' | 'approved' | 'rejected' | 'paid' | 'default'
+type BadgeVariant = 'active' | 'lapsed' | 'pending' | 'draft' | 'approved' | 'rejected' | 'paid' | 'default' | 'impact' | 'outline'
 
 interface BadgeProps {
     variant?: BadgeVariant
@@ -19,6 +19,8 @@ const variants: Record<BadgeVariant, string> = {
     rejected: `${base} bg-red-500/20 text-red-400`,
     paid: `${base} bg-[var(--color-accent-muted)] text-[var(--color-accent)]`,
     default: `${base} bg-[var(--color-surface)] text-[var(--color-text-muted)] border border-[var(--color-border)]`,
+    impact: `${base} bg-[var(--color-impact-muted)] text-[var(--color-impact)] border border-[var(--color-impact)]/20`,
+    outline: `${base} bg-transparent border border-[var(--color-border)] text-[var(--color-text-muted)]`,
 }
 
 export function Badge({ variant = 'default', children, className }: BadgeProps) {

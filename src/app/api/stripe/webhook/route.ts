@@ -24,6 +24,26 @@ export async function POST(req: Request) {
 
     try {
         switch (event.type) {
+            case 'checkout.session.completed': {
+                const session = event.data.object as Stripe.Checkout.Session
+                if (session.metadata?.type === 'one_off_donation') {
+                    const charityId = session.metadata.charityId
+                    const amountInPence = session.amount_total || 0
+
+                    if (charityId) {
+                        // Record the raw one-time donation in charity_contributions
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        await (supabase.from('charity_contributions') as any).insert({
+                            charity_id: charityId,
+                            amount: amountInPence / 100,
+                            period: new Date().toISOString().substring(0, 7),
+                            source: 'voluntary',
+                            // No user_id attached for anonymous donations, but could capture if we wanted
+                        })
+                    }
+                }
+                break
+            }
             case 'customer.subscription.created':
             case 'customer.subscription.updated': {
                 const sub = event.data.object as Stripe.Subscription
