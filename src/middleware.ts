@@ -63,7 +63,8 @@ export async function middleware(request: NextRequest) {
             return NextResponse.redirect(new URL('/login', request.url))
         }
         // let them into /dashboard/settings even if lapsed so they can resubscribe
-        if (!path.startsWith('/dashboard/settings')) {
+        // bypass check if returning from a successful stripe checkout to avoid race condition with webhook
+        if (!path.startsWith('/dashboard/settings') && request.nextUrl.searchParams.get('success') !== 'true') {
             // Check if they have an active subscription
             const { data: sub } = await supabase
                 .from('subscriptions')
